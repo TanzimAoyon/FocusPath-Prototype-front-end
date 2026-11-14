@@ -5,7 +5,7 @@
 // ==========================================================
 
 // IMPORTANT: Replace this URL with your Backend Codespace Public Port 3000 URL!
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'https://orange-journey-p5r4wxrg5p726g4p-3000.app.github.dev/';
 
 const $ = s => document.querySelector(s), KEY = 'focuspath_v3';
 const DEF = {
