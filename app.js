@@ -4,7 +4,7 @@
 
 // LINE 6: Once deployed on Render, replace this with your Render URL + /api
 // Example: const API_URL = 'https://focuspath-backend.onrender.com/api';
-const API_URL = 'https://YOUR-RENDER-BACKEND-URL.onrender.com/api';
+const API_URL = 'https://focuspath-backend-prototype.onrender.com/api'';
 
 const $ = s => document.querySelector(s), KEY = 'focuspath_v3';
 const DEF = {
