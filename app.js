@@ -1,11 +1,10 @@
 // ==========================================================
 // FOCUS PATH — main app script (REST API + DOM Edition)
-// Sections: 1 REST API & DOM Helpers  2 Demo data  3 Icons  4 Navigation
-//           5 Pages  6 Actions  7 Roadmap  8 Focus timer  9 Profile
 // ==========================================================
 
-// IMPORTANT: Replace this URL with your Backend Codespace Public Port 3000 URL!
-const API_URL = 'https://orange-journey-p5r4wxrg5p726g4p-3000.app.github.dev/api';
+// LINE 6: Once deployed on Render, replace this with your Render URL + /api
+// Example: const API_URL = 'https://focuspath-backend.onrender.com/api';
+const API_URL = 'https://YOUR-RENDER-BACKEND-URL.onrender.com/api';
 
 const $ = s => document.querySelector(s), KEY = 'focuspath_v3';
 const DEF = {
@@ -30,7 +29,7 @@ const DEF = {
 };
 const S = Object.assign({}, DEF, JSON.parse(localStorage.getItem(KEY) || 'null') || demo());
 
-// DOM Helper: Create an element with attributes, classes, and children
+// Explicit DOM Creation Helper
 function createEl(tag, attrs = {}, children = []) {
   const el = document.createElement(tag);
   Object.entries(attrs).forEach(([k, v]) => {
@@ -47,7 +46,6 @@ function createEl(tag, attrs = {}, children = []) {
   return el;
 }
 
-// Save state locally AND push to REST API backend (PUT /api/state)
 const save = () => {
   localStorage.setItem(KEY, JSON.stringify(S));
   const xpNode = document.getElementById('xp');
@@ -79,7 +77,6 @@ async function loadFromServer() {
         localStorage.setItem(KEY, JSON.stringify(S));
         draw();
       } else {
-        // First run: seed the backend database with initial state
         await syncToServer();
       }
     }
@@ -88,7 +85,6 @@ async function loadFromServer() {
   }
 }
 
-// Dedicated REST API calls for Tasks (POST, PUT, DELETE)
 async function apiSaveTodo(todo, isEdit) {
   try {
     const url = isEdit ? `${API_URL}/todos/${todo.id}` : `${API_URL}/todos`;
@@ -142,7 +138,7 @@ function reward(key, xp, msg) {
 }
 
 // ==========================================================
-// 2. DEMO DATA — used the first time the app opens
+// 2. DEMO DATA
 // ==========================================================
 function demo() {
   const dk = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'), p = n => { const d = new Date(); d.setDate(d.getDate() + n); return dk(d); };
@@ -401,7 +397,7 @@ const ICON = {
 };
 
 // ==========================================================
-// 4. NAVIGATION (Built with Explicit DOM Manipulation)
+// 4. NAVIGATION (Explicit DOM Manipulation)
 // ==========================================================
 const NAV = [
   ['home', 'Home'],
@@ -427,7 +423,7 @@ function go(p, e) {
 
 function renderNavDOM() {
   const navEl = document.getElementById('nav');
-  navEl.replaceChildren(); // Clear existing DOM nodes
+  navEl.replaceChildren();
   NAV.forEach(([key, label]) => {
     const btn = createEl('button', {
       className: key === page ? 'on' : '',
@@ -456,7 +452,6 @@ function draw() {
     while (contentWrapper.firstChild) {
       viewEl.appendChild(contentWrapper.firstChild);
     }
-    // If on To-do page, mount task cards via explicit DOM API
     if (page === 'todo') renderTodoListDOM();
   }
   paint();
@@ -494,7 +489,6 @@ function within(d, f) {
   return x >= s && x < e;
 }
 
-// Explicit DOM Builder for To-Do Task Cards
 function renderTodoListDOM() {
   const container = document.getElementById('todo-list-container');
   if (!container) return;
@@ -545,12 +539,8 @@ const V = {
   home() {
     const top = S.todos.filter(t => t.mit && !t.done), nx = S.stages.length < 7 ? [0, 1, 2, 3, 4, 5, 6].find(i => !S.stages.includes(i)) : -1, g = S.goals[0];
     return `<div class="hero">
-        <h2>
-          Welcome back, ${esc((S.profile.name||'there').split(' ')[0])}! 👋
-        </h2>
-        <p>
-          ${nx<0?'You finished the whole path! 🏆':'Next up: Stage '+(nx+1)+' — '+STAGES[nx].n}
-        </p>
+        <h2>Welcome back, ${esc((S.profile.name||'there').split(' ')[0])}! 👋</h2>
+        <p>${nx<0?'You finished the whole path! 🏆':'Next up: Stage '+(nx+1)+' — '+STAGES[nx].n}</p>
         <button class="btn alt" onclick="${nx<0?"go('roadmap')":`open_(${nx})`}">Continue journey</button> <button class="btn alt" onclick="go('timer')">Start focus session</button>
       </div>
       <div class="grid">
@@ -790,7 +780,7 @@ const V = {
       <div class="card">
         <b>👤 Account & Server Sync</b>
         <p>Level ${Math.floor(S.xp/100)+1} · ${S.xp} XP · ${S.streak}-day streak</p>
-        <small>Connected to REST API (${API_URL}) with local browser fallback.</small>
+        <small>Connected to MySQL REST API (${API_URL}) with local browser fallback.</small>
       </div>
       <div class="card">
         <b>💾 Data</b>
@@ -802,7 +792,7 @@ const V = {
 };
 
 // ==========================================================
-// 6. ACTIONS (Connected to REST API)
+// 6. ACTIONS
 // ==========================================================
 async function resetWithDemo() {
   if (confirm('Replace your data with demo data?')) {
@@ -1446,6 +1436,5 @@ function photo(inp) {
   r.readAsDataURL(f);
 }
 
-// Initial render + Fetch latest state from REST API
 draw();
 loadFromServer();
